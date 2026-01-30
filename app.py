@@ -17,6 +17,10 @@ from osint.geo_osint import infer_location
 from osint.web_exposure import analyze_website_exposure
 from osint.username_discovery import discover_username
 from osint.username_enumerator import enumerate_username
+from osint.reverse_image_intelligence import analyze_image_exposure
+from osint.reverse_engagement import analyze_engagement_exposure
+from osint.reverse_risk import calculate_reverse_risk
+
 
 # OPTIONAL MEDIA OSINT
 try:
@@ -128,6 +132,34 @@ def username_osint():
         )
 
     return render_template("username_scan.html")
+# ================= REVERSE OSINT (IMAGE EXPOSURE) =================
+
+@app.route("/reverse-osint", methods=["GET", "POST"])
+def reverse_osint():
+    if request.method == "POST":
+        image = request.files.get("image")
+        image_url = request.form.get("image_url")
+
+        image_path = None
+        os.makedirs("uploads/reverse_images", exist_ok=True)
+
+        if image and image.filename:
+            image_path = os.path.join("uploads/reverse_images", image.filename)
+            image.save(image_path)
+
+        image_intel = analyze_image_exposure(image_path, image_url)
+        engagement = analyze_engagement_exposure(image_intel)
+        risk = calculate_reverse_risk(engagement)
+
+        return render_template(
+            "reverse_result.html",
+            image_intel=image_intel,
+            engagement=engagement,
+            risk=risk
+        )
+
+    return render_template("reverse_upload.html")
+
 
 # ================= SCAN LOGIC =================
 
