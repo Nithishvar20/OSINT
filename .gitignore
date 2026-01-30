@@ -1,0 +1,49 @@
+# =========================
+# Ignore EVERYTHING by default
+# =========================
+*
+
+# =========================
+# Allow git control
+# =========================
+!.gitignore
+
+# =========================
+# Allow Python source code ONLY
+# =========================
+!*.py
+!osint/
+!osint/**/*.py
+
+# =========================
+# Allow templates
+# =========================
+!templates/
+!templates/**
+
+# =========================
+# Explicitly block junk
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+
+# =========================
+# NEVER push datasets / models
+# =========================
+dataset/
+data/
+uploads/
+static/
+
+osint/data/
+osint/models/
+osint/ai_image_ml/dataset/
+osint/ai_image_ml/models/
+
+*.pt
+*.pth
+*.pkl
+*.csv
+*.json
