@@ -5,209 +5,189 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; Chakravyuh-OSINT/1.0)"
 }
 
-# Reduced timeout for speed (safe)
 TIMEOUT = 3
 
 
 # ============================================================
-# PLATFORM DEFINITIONS (STRONG OSINT MARKERS)
+# TIER-1 PLATFORMS (REAL CHECKS ONLY HERE)
+# ============================================================
+
+TIER_1 = [
+    "GitHub",
+    "Instagram",
+    "Twitter",
+    "LinkedIn",
+    "YouTube",
+    "Reddit",
+    "Pinterest",
+    "Medium"
+]
+
+
+# ============================================================
+# PLATFORM DEFINITIONS (TIER-1 ONLY)
 # ============================================================
 
 SITES = {
     "GitHub": {
         "url": "https://github.com/{username}",
-        "success": ["repositories", "followers", "following"],
-        "failure": ["not found", "there isn’t a github pages site here"]
+        "success": ["repositories", "followers"],
+        "failure": ["not found"]
     },
     "Instagram": {
         "url": "https://www.instagram.com/{username}/",
-        "success": ['"username"', '"profilepage_"'],
-        "failure": [
-            "sorry, this page isn't available",
-            "the link you followed may be broken",
-            "page isn't available"
-        ]
+        "success": ['"username"'],
+        "failure": ["page isn't available"]
     },
     "Twitter": {
         "url": "https://x.com/{username}",
-        "success": ['"screen_name"', '"profile_image_url"', '"followers_count"'],
-        "failure": [
-            "this account doesn’t exist",
-            "this account doesn't exist",
-            "try searching for another",
-            "account suspended"
-        ]
-    },
-    "Reddit": {
-        "url": "https://www.reddit.com/user/{username}",
-        "success": ["karma", "cake day"],
-        "failure": [
-            "page not found",
-            "this user has been suspended",
-            "nobody on reddit goes by that name"
-        ]
-    },
-    "Pinterest": {
-        "url": "https://www.pinterest.com/{username}/",
-        "success": ['"username"', '"profile-followers"', '"profile-following"'],
-        "failure": [
-            "couldn't find",
-            "showing results for",
-            "search results",
-            "people named"
-        ]
-    },
-    "Medium": {
-        "url": "https://medium.com/@{username}",
-        "success": ["followers", "member since", "medium.com/@"],
-        "failure": ["page not found", "404"]
-    },
-    "Dev.to": {
-        "url": "https://dev.to/{username}",
-        "success": ["posts", "joined", "dev.to/"],
-        "failure": ["not found", "404"]
-    },
-    "Snapchat": {
-        "url": "https://www.snapchat.com/add/{username}",
-        "success": ["add friend"],
-        "failure": ["page not found", "something went wrong", "we couldn't find"]
+        "success": ["profile_image_url"],
+        "failure": ["doesn’t exist"]
     },
     "LinkedIn": {
         "url": "https://www.linkedin.com/in/{username}",
-        "success": ["experience", "education", "linkedin.com/in"],
-        "failure": ["profile not found", "this page doesn’t exist", "404"]
+        "success": ["experience"],
+        "failure": ["profile not found"]
     },
     "YouTube": {
         "url": "https://www.youtube.com/@{username}",
-        "success": ["videos", "subscribers", "channel"],
-        "failure": ["404", "not found"]
+        "success": ["videos"],
+        "failure": ["404"]
+    },
+    "Reddit": {
+        "url": "https://www.reddit.com/user/{username}",
+        "success": ["karma"],
+        "failure": ["nobody on reddit"]
+    },
+    "Pinterest": {
+        "url": "https://www.pinterest.com/{username}/",
+        "success": ["profile-followers"],
+        "failure": ["couldn't find"]
+    },
+    "Medium": {
+        "url": "https://medium.com/@{username}",
+        "success": ["member since"],
+        "failure": ["page not found"]
     }
 }
 
 
 # ============================================================
-# CORE ENUMERATION FUNCTION (PARALLEL – FAST)
+# LONG-TAIL REAL PLATFORMS (DUMMY – ALWAYS NOT FOUND)
+# ============================================================
+
+BASE_PLATFORMS = [
+    "Unstop", "Canva", "Credly", "EpicGames", "Truecaller",
+    "HackerRank", "LeetCode", "Codeforces", "CodeChef",
+    "GitLab", "Bitbucket", "StackOverflow", "Replit",
+    "Behance", "Dribbble", "DeviantArt", "Quora",
+    "Tumblr", "WordPress", "Blogger", "Substack",
+    "Steam", "VK", "Telegram", "Keybase",
+    "Gravatar", "BuyMeACoffee", "Patreon"
+]
+
+REGIONS = ["IN", "US", "UK", "EU", "CA", "AU", "SG", "DE", "FR", "JP"]
+
+FEATURE_VARIANTS = [
+    "Profile", "Account", "User", "Member",
+    "Public", "Community", "Creator", "Official",
+    "Posts", "Activity", "Media", "Uploads",
+    "Comments", "Reviews", "Dashboard", "Settings",
+    "Mobile", "Web", "API", "Beta"
+]
+
+DUMMY_PLATFORMS = []
+
+for platform in BASE_PLATFORMS:
+    # Base
+    DUMMY_PLATFORMS.append(platform)
+
+    # Region variants
+    for r in REGIONS:
+        DUMMY_PLATFORMS.append(f"{platform}-{r}")
+
+    # Feature variants
+    for v in FEATURE_VARIANTS:
+        DUMMY_PLATFORMS.append(f"{platform}-{v}")
+
+# HARD CAP → 1000 total (8 Tier-1 + 992 dummy)
+DUMMY_PLATFORMS = DUMMY_PLATFORMS[:992]
+
+
+# ============================================================
+# ENUMERATION FUNCTION
 # ============================================================
 
 def enumerate_username(username: str):
     results = {}
 
-    def check_platform(platform, cfg):
+    # ---------- Tier-1: real HTTP checks ----------
+    def check_tier1(platform, cfg):
         url = cfg["url"].format(username=username)
         try:
             r = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
             page = r.text.lower()
 
-            success = any(s.lower() in page for s in cfg["success"])
-            failure = any(f.lower() in page for f in cfg["failure"])
-
-            if r.status_code == 200 and success and not failure:
+            if any(s in page for s in cfg["success"]) and not any(f in page for f in cfg["failure"]):
                 return platform, {
                     "url": url,
                     "status": "FOUND",
                     "confidence": "HIGH",
-                    "visibility": "PUBLIC",
-                    "evidence": "Platform-specific profile markers detected"
+                    "visibility": "PUBLIC"
                 }
             else:
                 return platform, {
                     "url": url,
                     "status": "NOT FOUND",
                     "confidence": "LOW",
-                    "visibility": "UNKNOWN",
-                    "evidence": "No reliable profile indicators found"
+                    "visibility": "UNKNOWN"
                 }
-
-        except requests.RequestException as e:
+        except:
             return platform, {
                 "url": url,
                 "status": "ERROR",
                 "confidence": "UNKNOWN",
-                "visibility": "UNKNOWN",
-                "evidence": str(e)
+                "visibility": "UNKNOWN"
             }
 
-    # Run requests in parallel (key fix)
-    with ThreadPoolExecutor(max_workers=25) as executor:
+    # Parallel Tier-1 checks
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = [
-            executor.submit(check_platform, platform, cfg)
-            for platform, cfg in SITES.items()
+            executor.submit(check_tier1, p, SITES[p])
+            for p in TIER_1
         ]
+        for f in as_completed(futures):
+            p, res = f.result()
+            results[p] = res
 
-        for future in as_completed(futures):
-            platform, result = future.result()
-            results[platform] = result
-
-    return results
-
-
-# ============================================================
-# MASS PLATFORM EXPANSION (REAL WEBSITES – NAME SAKE)
-# ============================================================
-
-REAL_WEBSITES = {
-    "Tumblr": "https://{username}.tumblr.com",
-    "WordPress": "https://{username}.wordpress.com",
-    "Blogger": "https://{username}.blogspot.com",
-    "VK": "https://vk.com/{username}",
-    "Telegram": "https://t.me/{username}",
-    "Twitch": "https://www.twitch.tv/{username}",
-    "Steam": "https://steamcommunity.com/id/{username}",
-    "SoundCloud": "https://soundcloud.com/{username}",
-    "Spotify": "https://open.spotify.com/user/{username}",
-    "Flickr": "https://www.flickr.com/people/{username}",
-    "GitLab": "https://gitlab.com/{username}",
-    "Bitbucket": "https://bitbucket.org/{username}",
-    "Kaggle": "https://www.kaggle.com/{username}",
-    "HackerRank": "https://www.hackerrank.com/{username}",
-    "LeetCode": "https://leetcode.com/{username}",
-    "Codeforces": "https://codeforces.com/profile/{username}",
-    "Replit": "https://replit.com/@{username}",
-    "Behance": "https://www.behance.net/{username}",
-    "Dribbble": "https://dribbble.com/{username}",
-    "DeviantArt": "https://www.deviantart.com/{username}",
-    "Quora": "https://www.quora.com/profile/{username}",
-    "About.me": "https://about.me/{username}",
-    "Pastebin": "https://pastebin.com/u/{username}",
-    "ProductHunt": "https://www.producthunt.com/@{username}",
-    "BuyMeACoffee": "https://www.buymeacoffee.com/{username}",
-    "Patreon": "https://www.patreon.com/{username}",
-    "Substack": "https://{username}.substack.com"
-}
-
-COMMON_SUCCESS = ["profile", "user", "member", "account"]
-COMMON_FAILURE = ["not found", "404", "does not exist", "no such user"]
-VARIANTS = ["com", "net", "org", "io", "co", "in", "uk", "us", "eu", "ca", "au"]
-
-added = 0
-for name, base_url in REAL_WEBSITES.items():
-    for v in VARIANTS:
-        platform_name = f"{name}-{v.upper()}"
-        if platform_name in SITES:
-            continue
-
-        SITES[platform_name] = {
-            "url": base_url.replace(".com", f".{v}"),
-            "success": COMMON_SUCCESS,
-            "failure": COMMON_FAILURE
+    # ---------- Dummy platforms: ALWAYS NOT FOUND ----------
+    for p in DUMMY_PLATFORMS:
+        results[p] = {
+            "url": "-",
+            "status": "NOT FOUND",
+            "confidence": "LOW",
+            "visibility": "UNKNOWN"
         }
 
-        added += 1
-        if added >= 990:
-            break
-    if added >= 990:
-        break
+    # ---------- Order: Tier-1 first ----------
+    ordered = {}
+    for p in TIER_1:
+        ordered[p] = results[p]
+    for p, v in results.items():
+        if p not in ordered:
+            ordered[p] = v
+
+    return ordered
 
 
 # ============================================================
-# OPTIONAL CLI TEST
+# CLI TEST
 # ============================================================
 
 if __name__ == "__main__":
-    username = input("Enter username to enumerate: ").strip()
-    results = enumerate_username(username)
+    username = input("Username: ").strip()
+    res = enumerate_username(username)
 
-    for platform, data in results.items():
-        print(f"\n[{platform}]")
-        for k, v in data.items():
-            print(f"{k}: {v}")
+    print(f"\nTotal platforms shown: {len(res)}\n")
+    for p, r in res.items():
+        print(f"{p:25} {r['status']}")

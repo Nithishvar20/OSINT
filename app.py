@@ -40,6 +40,9 @@ LAST_SCAN = {}
 def landing():
     return render_template("landing.html")
 
+@app.route("/test")
+def test():
+    return "Flask is working"
 
 @app.route("/scan", methods=["GET", "POST"])
 def index():
@@ -355,4 +358,4 @@ def download_pdf():
 # ================= RUN =================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="127.0.0.1", port=5050, debug=True)
