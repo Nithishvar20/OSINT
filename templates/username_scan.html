@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Username Exposure Check</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg: #020617;
+  --card: #0b1224;
+  --border: #1e293b;
+  --accent: #38bdf8;
+  --muted: #94a3b8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+/* ===== WRAPPER ===== */
+
+.wrapper {
+  max-width: 1500px;
+  margin: auto;
+  padding: 110px 32px 50px;
+}
+
+/* ===== TOP GRID ===== */
+
+.top-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr 340px;
+  gap: 36px;
+  align-items: center;
+}
+
+/* ===== BIG CENTER CARD ===== */
+
+.center-card {
+  background: linear-gradient(180deg, #0b1224, #050a18);
+  border: 1px solid rgba(56,189,248,.45);
+  border-radius: 26px;
+  padding: 48px 56px;
+  text-align: center;
+  box-shadow: 0 40px 90px rgba(0,0,0,.7);
+}
+
+.center-card h1 {
+  margin: 0 0 10px;
+  font-size: 1.9rem;
+  color: var(--accent);
+}
+
+.center-card p {
+  margin-bottom: 36px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+}
+
+.form input {
+  padding: 16px;
+  font-size: 1rem;
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: white;
+}
+
+.form button {
+  padding: 16px 26px;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===== SIDE COLUMNS ===== */
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.card h4 {
+  margin: 0 0 10px;
+  color: var(--accent);
+}
+
+.card p {
+  margin: 0;
+  font-size: .9rem;
+  color: #cbd5f5;
+  line-height: 1.55;
+}
+
+/* Platforms */
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 8px;
+}
+
+.platforms span {
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px;
+  font-size: .85rem;
+  text-align: center;
+}
+
+/* Warning */
+.warning {
+  background: linear-gradient(180deg, #180909, #0e0505);
+  border-color: rgba(248,113,113,.35);
+}
+
+/* ===== FEATURES ROW ===== */
+
+.features {
+  margin-top: 70px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 24px;
+}
+
+.feature {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+}
+
+.feature h5 {
+  margin: 0 0 6px;
+  color: var(--accent);
+}
+
+.feature p {
+  margin: 0;
+  font-size: .85rem;
+  color: #cbd5f5;
+}
+
+/* Footer */
+footer {
+  margin-top: 50px;
+  text-align: center;
+  font-size: .8rem;
+  color: #64748b;
+}
+
+/* Responsive */
+@media(max-width:1200px){
+  .top-grid { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <!-- TOP SECTION -->
+  <div class="top-grid">
+
+    <!-- LEFT -->
+    <div class="side">
+      <div class="card">
+        <h4>🧠 How It Works</h4>
+        <p>Performs OSINT scans on public profile URLs linked to a username.</p>
+      </div>
+
+      <div class="card">
+        <h4>🔍 Scan Scope</h4>
+        <p>No login, no private scraping, only publicly accessible data.</p>
+      </div>
+
+      <div class="card">
+        <h4>🎯 Use Case</h4>
+        <p>Useful for digital footprint analysis, investigations, and awareness.</p>
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center-card">
+      <h1>🔍 Username Exposure Check</h1>
+      <p>Discover where a username appears across public platforms</p>
+
+      <form method="POST" class="form">
+        <input name="username" placeholder="Enter username" required>
+        <button>Run Username Scan</button>
+      </form>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="side">
+      <div class="card">
+        <h4>🌐 Platforms Checked</h4>
+        <div class="platforms">
+          <span>GitHub</span><span>Twitter</span>
+          <span>Instagram</span><span>Reddit</span>
+          <span>LinkedIn</span><span>Medium</span>
+          <span>Facebook</span><span>Dev.to</span>
+        </div>
+      </div>
+
+      <div class="card warning">
+        <h4>⚠️ Ethical Usage</h4>
+        <p>Educational & cybersecurity research only.</p>
+      </div>
+
+      <div class="card">
+        <h4>🔐 Privacy</h4>
+        <p>No user data stored. Scans are session-based only.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feature">
+      <h5>⚡ Fast Scan</h5>
+      <p>Instant profile availability checks</p>
+    </div>
+    <div class="feature">
+      <h5>🧩 Modular</h5>
+      <p>Part of a larger OSINT toolkit</p>
+    </div>
+    <div class="feature">
+      <h5>📚 Academic</h5>
+      <p>Designed for learning & research</p>
+    </div>
+    <div class="feature">
+      <h5>🛡️ Ethical</h5>
+      <p>Follows OSINT best practices</p>
+    </div>
+  </div>
+
+  <footer>
+    OSINT Toolkit • Username Exposure Module<br>
+    Built for academic research & cybersecurity analysis
+  </footer>
+
+</div>
+
+</body>
+</html>

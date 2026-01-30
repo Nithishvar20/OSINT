@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>RiskLens – Exposure Intelligence Scan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    /* ===== Theme (Matches Landing Page) ===== */
+    --bg0:#070A12;
+    --bg1:#0B1630;
+    --bg2:#07142A;
+
+    --glass: rgba(255,255,255,0.06);
+    --glass2: rgba(255,255,255,0.09);
+    --stroke: rgba(255,255,255,0.10);
+    --stroke2: rgba(255,255,255,0.14);
+
+    --text:#EAF0FF;
+    --muted: rgba(234,240,255,0.74);
+    --dim: rgba(234,240,255,0.52);
+
+    --blue:#4F8CFF;
+    --cyan:#38D6FF;
+    --violet:#A78BFA;
+
+    --warnBG: rgba(245,158,11,0.10);
+    --warnBD: rgba(245,158,11,0.24);
+    --warnTX: #FFD18C;
+
+    --shadow: 0 26px 80px rgba(0,0,0,0.55);
+    --shadow2: 0 18px 44px rgba(0,0,0,0.46);
+
+    --r-xl: 30px;
+    --r-lg: 22px;
+    --r-md: 16px;
+    --r-sm: 12px;
+  }
+
+  /* ===== Reset ===== */
+  *{ box-sizing: border-box; }
+  html, body{
+    margin:0;
+    height:100%;
+    overflow:hidden;  /* ✅ non-scroll desktop */
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
+    color: var(--text);
+    background: var(--bg0);
+  }
+
+  body{
+    display:grid;
+    place-items:center;
+    background:
+      radial-gradient(1100px 700px at 14% 18%, rgba(56,214,255,0.14), transparent 60%),
+      radial-gradient(900px 600px at 88% 16%, rgba(79,140,255,0.16), transparent 58%),
+      radial-gradient(1200px 850px at 55% 115%, rgba(167,139,250,0.10), transparent 66%),
+      linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 55%, var(--bg2) 100%);
+  }
+
+  /* ===== Layout shell ===== */
+  .stage{
+    width: min(1240px, 94vw);
+    height: min(780px, 92vh);
+    padding: 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .shell{
+    width: 100%;
+    height: 100%;
+    border-radius: var(--r-xl);
+    padding: 22px;
+
+    background:
+      radial-gradient(700px 420px at 82% 10%, rgba(56,214,255,0.07), transparent 65%),
+      radial-gradient(720px 440px at 18% 88%, rgba(79,140,255,0.08), transparent 65%),
+      rgba(255,255,255,0.035);
+
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+
+    display:grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 16px;
+  }
+
+  /* ===== Topbar ===== */
+  .topbar{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap: 18px;
+    padding: 4px 4px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+
+  .logo{
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    position:relative;
+    overflow:hidden;
+    flex: 0 0 auto;
+
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 18px 55px rgba(79,140,255,.14);
+  }
+  .logo::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background:
+      radial-gradient(24px 24px at 35% 35%, rgba(56,214,255,0.96), transparent 60%),
+      radial-gradient(30px 30px at 70% 75%, rgba(79,140,255,0.96), transparent 62%),
+      linear-gradient(135deg, rgba(167,139,250,0.34), rgba(56,214,255,0.10));
+    opacity: 0.95;
+  }
+  .logo::after{
+    content:"RL";
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-weight: 950;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    color:#061126;
+    text-shadow: 0 8px 18px rgba(0,0,0,0.35);
+  }
+
+  .titleblock h1{
+    margin:0;
+    font-size: 20px;
+    font-weight: 950;
+    letter-spacing: -0.35px;
+    line-height: 1.25;
+  }
+  .titleblock p{
+    margin: 4px 0 0;
+    font-size: 12.8px;
+    color: rgba(234,240,255,0.60);
+    line-height: 1.55;
+    max-width: 560px;
+  }
+
+  .status{
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .34px;
+    text-transform: uppercase;
+    color: rgba(234,240,255,0.82);
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+  .status .dot{
+    width: 9px; height: 9px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    box-shadow: 0 0 22px rgba(56,214,255,0.35);
+  }
+
+  /* ===== Grid ===== */
+  form.grid{
+    display:grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 16px;
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* ===== Panel ===== */
+  .panel{
+    height: 100%;
+    min-height: 0;
+    border-radius: var(--r-lg);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .panel-head{
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .panel-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .panel-title h3{
+    margin:0;
+    font-size: 13.5px;
+    font-weight: 950;
+    letter-spacing: .2px;
+    color: rgba(234,240,255,0.93);
+  }
+
+  .subpill{
+    font-size: 10.5px;
+    font-weight: 950;
+    letter-spacing: .32px;
+    text-transform: uppercase;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(234,240,255,0.74);
+    white-space: nowrap;
+  }
+
+  .panel-head p{
+    margin:0;
+    font-size: 12.2px;
+    color: rgba(234,240,255,0.60);
+    line-height: 1.55;
+  }
+
+  .panel-body{
+    padding: 16px;
+    min-height: 0;
+    height: 100%;
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+
+  /* ===== Left: Scrollable only on platform-wise ===== */
+  .panel.scrollable .panel-body{
+    overflow-y:auto;
+    padding-right: 10px;
+  }
+
+  .panel.scrollable .panel-body::-webkit-scrollbar{ width: 10px; }
+  .panel.scrollable .panel-body::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+    border: 2px solid rgba(0,0,0,0);
+    background-clip: padding-box;
+  }
+  .panel.scrollable .panel-body::-webkit-scrollbar-thumb:hover{
+    background: rgba(255,255,255,0.18);
+    background-clip: padding-box;
+  }
+
+  /* ===== Mode Cards ===== */
+  .mode{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .mode-card{
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.10);
+    cursor:pointer;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    min-height: 92px;
+    position:relative;
+    overflow:hidden;
+  }
+  .mode-card:hover{
+    transform: translateY(-2px);
+    border-color: rgba(56,214,255,0.22);
+    background: rgba(255,255,255,0.06);
+  }
+  .mode-card.active{
+    border-color: rgba(56,214,255,0.54);
+    background:
+      radial-gradient(520px 200px at 30% 0%, rgba(56,214,255,0.16), transparent 62%),
+      rgba(255,255,255,0.05);
+    box-shadow: 0 18px 48px rgba(0,0,0,0.34);
+  }
+
+  .mode-card strong{
+    display:block;
+    font-size: 13px;
+    font-weight: 950;
+    letter-spacing: .2px;
+    margin-bottom: 6px;
+  }
+  .mode-card span{
+    display:block;
+    font-size: 12px;
+    color: rgba(234,240,255,0.62);
+    line-height: 1.5;
+  }
+
+  .tick{
+    position:absolute;
+    top: 12px;
+    right: 12px;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    display:grid;
+    place-items:center;
+
+    opacity:0;
+    transform: scale(0.92);
+    transition: .2s ease;
+
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    color:#061126;
+    font-weight: 950;
+    font-size: 13px;
+  }
+  .mode-card.active .tick{ opacity: 1; transform: scale(1); }
+
+  input[type="radio"]{ display:none; }
+
+  /* ===== Inputs ===== */
+  .field{ margin-top: 2px; }
+
+  label{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    font-size: 12px;
+    color: rgba(234,240,255,0.80);
+    font-weight: 750;
+    letter-spacing: .15px;
+  }
+
+  .req{
+    font-size: 10.5px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(234,240,255,0.62);
+  }
+
+  input[type="text"], textarea{
+    width:100%;
+    margin-top: 8px;
+    padding: 13px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.11);
+    outline:none;
+
+    background: rgba(7,10,18,0.88);
+    color: var(--text);
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    transition: border-color .16s ease, box-shadow .16s ease;
+  }
+
+  input[type="text"]::placeholder,
+  textarea::placeholder{ color: rgba(234,240,255,0.38); }
+
+  input[type="text"]:focus,
+  textarea:focus{
+    border-color: rgba(56,214,255,0.55);
+    box-shadow: 0 0 0 3px rgba(56,214,255,0.14);
+  }
+
+  /* multi */
+  .multi-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .multi-grid input{ margin-top:0; }
+
+  /* ===== Upload ===== */
+  .upload{
+    border-radius: 18px;
+    padding: 14px;
+    border: 1px dashed rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .upload-title{
+    font-size: 12.3px;
+    font-weight: 900;
+    letter-spacing: .18px;
+    color: rgba(234,240,255,0.88);
+    margin-bottom: 4px;
+  }
+  .upload-note{
+    font-size: 11.5px;
+    color: rgba(234,240,255,0.60);
+    margin-bottom: 10px;
+  }
+
+  .upload-btn{
+    width: 100%;
+    height: 46px;
+    border-radius: 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+
+    font-size: 13px;
+    font-weight: 950;
+    letter-spacing: .2px;
+
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(234,240,255,0.86);
+    transition: transform .16s ease, background .16s ease;
+  }
+  .upload-btn:hover{
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.09);
+  }
+
+  .filemeta{
+    margin-top: 10px;
+    font-size: 12px;
+    color: rgba(234,240,255,0.72);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+  }
+  .filename{
+    max-width: 72%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .clearfile{
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(234,240,255,0.72);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 900;
+    cursor:pointer;
+  }
+  .clearfile:hover{
+    border-color: rgba(255,120,120,0.55);
+    color: rgba(255,140,140,0.95);
+  }
+
+  /* ===== RIGHT PANEL: make textarea fill remaining space ===== */
+  .right-stack{
+    height: 100%;
+    min-height: 0;
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+  }
+
+  .osint-guidance{
+    padding: 12px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+    display:flex;
+    justify-content:space-between;
+    gap: 12px;
+  }
+
+  .osint-guidance .g-left{
+    min-width: 0;
+  }
+
+  .osint-guidance .g-left strong{
+    display:block;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: .18px;
+    margin-bottom: 4px;
+    color: rgba(234,240,255,0.90);
+  }
+
+  .osint-guidance .g-left span{
+    font-size: 11.5px;
+    color: rgba(234,240,255,0.60);
+    line-height: 1.5;
+    display:block;
+  }
+
+  .osint-guidance .g-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 8px;
+    justify-content:flex-end;
+    align-content:flex-start;
+  }
+
+  .tagpill{
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+
+    font-size: 10.5px;
+    font-weight: 900;
+    letter-spacing: .28px;
+    text-transform: uppercase;
+    color: rgba(234,240,255,0.72);
+  }
+
+  /* ✅ extended black box */
+  .textarea-wrap{
+    flex: 1;
+    min-height: 0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .textarea-wrap textarea{
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+  }
+
+  /* ===== Footer ===== */
+  .footer{
+    display:flex;
+    justify-content:flex-end;
+    gap: 12px;
+    padding: 10px 4px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .btn{
+    height: 52px;
+    border-radius: 16px;
+    padding: 0 22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-decoration:none;
+    font-size: 13px;
+    font-weight: 950;
+    letter-spacing: .35px;
+
+    cursor:pointer;
+    border: none;
+    white-space: nowrap;
+
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+
+  .btn.primary{
+    min-width: 260px;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    color:#061126;
+    box-shadow: 0 20px 60px rgba(79,140,255,0.26);
+  }
+  .btn.primary:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 28px 80px rgba(56,214,255,0.20);
+  }
+
+  .btn.ghost{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(234,240,255,0.84);
+    padding: 0 18px;
+  }
+  .btn.ghost:hover{
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.09);
+  }
+
+  /* Responsive */
+  @media(max-width: 980px){
+    html, body{ overflow:auto; }
+    .stage{ height:auto; padding: 18px; }
+    .shell{ height:auto; }
+    form.grid{ grid-template-columns: 1fr; }
+  }
+</style>
+
+
+<script>
+  function toggleMode(mode){
+    const single = document.getElementById('single');
+    const multi = document.getElementById('multi');
+    const singleBox = document.getElementById('singleBox');
+    const multiBox = document.getElementById('multiBox');
+    const leftPanel = document.getElementById("leftPanel");
+    const leftBody  = document.getElementById("leftBody");
+
+    single.classList.toggle('active', mode === 'single');
+    multi.classList.toggle('active', mode === 'multi');
+
+    singleBox.style.display = (mode === 'single') ? 'block' : 'none';
+    multiBox.style.display  = (mode === 'multi')  ? 'block' : 'none';
+
+    document.getElementById('mode_single').checked = (mode === 'single');
+    document.getElementById('mode_multi').checked  = (mode === 'multi');
+
+    if(mode === "multi"){
+      leftPanel.classList.add("scrollable");
+    } else {
+      leftPanel.classList.add("scrollable");
+      if(leftBody) leftBody.scrollTop = 0;
+    }
+  }
+
+  /* ✅ SHOW UPLOADED FILE NAME */
+  function updateFileMeta(input, metaId, nameId){
+    const file = input.files && input.files[0];
+    const meta = document.getElementById(metaId);
+    const name = document.getElementById(nameId);
+
+    if(file){
+      meta.style.display = "flex";
+      name.textContent = file.name;
+    } else {
+      meta.style.display = "none";
+      name.textContent = "";
+    }
+  }
+
+  /* ✅ CLEAR FILE */
+  function clearFile(inputId, metaId){
+    const input = document.getElementById(inputId);
+    const meta  = document.getElementById(metaId);
+
+    if(input){
+      input.value = "";
+    }
+    if(meta){
+      meta.style.display = "none";
+    }
+  }
+</script>
+</head>
+
+<body onload="toggleMode('single')">
+
+<main class="stage">
+  <section class="shell">
+
+    <!-- Top header -->
+    <div class="topbar">
+      <div class="brand">
+        
+        <div class="titleblock">
+          <h1>RiskLens – Exposure Scan</h1>
+          <p>Evidence-first scanning for identity correlation, metadata leakage, and synthetic media validation.</p>
+        </div>
+      </div>
+
+      
+    </div>
+
+    <!-- FORM -->
+    <form id="scanForm" method="POST" action="/scan" enctype="multipart/form-data" class="grid">
+
+      <!-- LEFT PANEL -->
+      <section class="panel" id="leftPanel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <h3>Scan Configuration</h3>
+            <span class="subpill">Identity Inputs</span>
+          </div>
+          <p>Select a scan mode and provide usernames for correlation.</p>
+        </div>
+
+        <div class="panel-body" id="leftBody">
+
+          <div class="mode">
+            <div id="single" class="mode-card active" onclick="toggleMode('single')">
+              
+              <input id="mode_single" type="radio" name="mode" value="single" checked>
+              <strong>Same Username</strong>
+              <span>Use one handle across platforms to identify reuse patterns.</span>
+            </div>
+
+            <div id="multi" class="mode-card" onclick="toggleMode('multi')">
+              
+              <input id="mode_multi" type="radio" name="mode" value="multi">
+              <strong>Platform-wise</strong>
+              <span>Use different usernames per platform for higher precision.</span>
+            </div>
+          </div>
+
+          <div id="singleBox">
+            <div class="field">
+              <label>
+                Username
+                <span class="req">Required</span>
+              </label>
+              <input type="text" name="single_username" placeholder="Enter username" />
+            </div>
+          </div>
+
+          <div id="multiBox" style="display:none;">
+            <div class="field">
+              <label>
+                Platform Usernames
+                <span class="req">Required</span>
+              </label>
+
+              <div class="multi-grid">
+
+                <input type="text" name="instagram" placeholder="Instagram username" />
+                <input type="text" name="facebook" placeholder="Facebook username" />
+                <input type="text" name="threads" placeholder="Threads username" />
+              </div>
+            </div>
+          </div>
+
+          <div class="upload">
+  <div class="upload-title">Media Evidence (optional)</div>
+  <div class="upload-note">
+    Upload image, video, or audio files for forensic metadata & authenticity checks.
+  </div>
+
+  <!-- IMAGE -->
+  <label class="upload-btn" for="image_file">🖼 Upload Image</label>
+  <input id="image_file" type="file" name="image_file" accept="image/*" hidden
+         onchange="updateFileMeta(this, 'imageMeta', 'imageName')" />
+
+  <div id="imageMeta" class="filemeta" style="display:none;">
+    <div class="filename" id="imageName"></div>
+    <button type="button" class="clearfile" onclick="clearFile('image_file','imageMeta')">Remove</button>
+  </div>
+
+  <!-- VIDEO -->
+  <label class="upload-btn" for="video_file">🎥 Upload Video</label>
+  <input id="video_file" type="file" name="video_file" accept="video/*" hidden
+         onchange="updateFileMeta(this, 'videoMeta', 'videoName')" />
+
+  <div id="videoMeta" class="filemeta" style="display:none;">
+    <div class="filename" id="videoName"></div>
+    <button type="button" class="clearfile" onclick="clearFile('video_file','videoMeta')">Remove</button>
+  </div>
+
+  <!-- AUDIO -->
+  <label class="upload-btn" for="audio_file">🔊 Upload Audio</label>
+  <input id="audio_file" type="file" name="audio_file" accept="audio/*" hidden
+         onchange="updateFileMeta(this, 'audioMeta', 'audioName')" />
+
+  <div id="audioMeta" class="filemeta" style="display:none;">
+    <div class="filename" id="audioName"></div>
+    <button type="button" class="clearfile" onclick="clearFile('audio_file','audioMeta')">Remove</button>
+  </div>
+</div>
+
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL -->
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <h3>Text OSINT</h3>
+            <span class="subpill">Context Signals</span>
+          </div>
+          <p>Paste text artifacts to enrich correlation confidence and reporting output.</p>
+        </div>
+
+        <div class="panel-body right-stack">
+
+          
+
+          <div class="textarea-wrap">
+            <div class="field">
+              <label>
+                Text Input
+                <span class="req">Optional</span>
+              </label>
+            </div>
+
+            <!-- ✅ this expands fully -->
+            <textarea name="text_input" placeholder="Example: bio, post content, suspicious profile summary, leaked text snippet..."></textarea>
+          </div>
+
+        </div>
+      </section>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="footer">
+      <a class="btn ghost" href="/">Back</a>
+      <button class="btn primary" type="submit" form="scanForm">
+        Run Exposure Scan
+      </button>
+    </div>
+
+  </section>
+</main>
+
+</body>
+</html>

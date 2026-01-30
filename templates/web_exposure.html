@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Website Exposure Check</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg: #020617;
+  --card: #0b1224;
+  --border: #1e293b;
+  --accent: #38bdf8;
+  --muted: #94a3b8;
+  --warning: #fbbf24;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+  overflow: hidden;
+}
+
+/* ===== MAIN GRID (S
+AME AS USERNAME PAGE) ===== */
+
+.wrapper {
+  max-width: 1500px;
+  margin: auto;
+  padding: 110px 32px 50px;
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr 340px;
+  gap: 36px;
+  align-items: center;
+}
+
+/* ===== CENTER CARD ===== */
+
+.center-card {
+  background: linear-gradient(180deg, #0b1224, #050a18);
+  border: 1px solid rgba(56,189,248,.45);
+  border-radius: 26px;
+  padding: 48px 56px;
+  text-align: center;
+  box-shadow: 0 40px 90px rgba(0,0,0,.7);
+}
+
+.center-card h1 {
+  margin: 0 0 10px;
+  font-size: 1.9rem;
+  color: var(--accent);
+}
+
+.center-card p {
+  margin-bottom: 36px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+}
+
+.form input {
+  padding: 16px;
+  font-size: 1rem;
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: white;
+}
+
+.form button {
+  padding: 16px 26px;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===== SIDE COLUMNS ===== */
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.card h4 {
+  margin: 0 0 10px;
+  color: var(--accent);
+}
+
+.card p {
+  margin: 0;
+  font-size: .9rem;
+  color: #cbd5f5;
+  line-height: 1.55;
+}
+
+/* ===== WARNING CARD ===== */
+
+.warning {
+  background: linear-gradient(180deg, #1a1205, #0e0a03);
+  border-color: rgba(251,191,36,.4);
+  color: #fde68a;
+}
+
+/* ===== FEATURES ROW ===== */
+
+.features {
+  margin-top: 70px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 24px;
+}
+
+.feature {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+}
+
+.feature h5 {
+  margin: 0 0 6px;
+  color: var(--accent);
+}
+
+.feature p {
+  margin: 0;
+  font-size: .85rem;
+  color: #cbd5f5;
+}
+
+/* Footer */
+footer {
+  margin-top: 50px;
+  text-align: center;
+  font-size: .8rem;
+  color: #64748b;
+}
+
+/* Responsive */
+@media(max-width:1200px){
+  .top-grid { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <!-- TOP GRID -->
+  <div class="top-grid">
+
+    <!-- LEFT SIDE -->
+    <div class="side">
+      <div class="card">
+        <h4>🧠 What This Checks</h4>
+        <p>
+          Identifies publicly exposed web resources such as
+          configuration files, open directories, and metadata.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>🔍 Scan Scope</h4>
+        <p>
+          Uses passive OSINT techniques only — no port scanning,
+          no brute force, no intrusive requests.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>🎯 Use Case</h4>
+        <p>
+          Useful for reconnaissance, security awareness,
+          and academic cybersecurity research.
+        </p>
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center-card">
+      <h1>🌐 Website Exposure Check</h1>
+      <p>Passive OSINT analysis of public web misconfigurations</p>
+
+      <form method="POST" action="/web-exposure/scan" class="form">
+        <input
+          type="text"
+          name="target"
+          placeholder="example.com or https://site.com"
+          required
+        />
+        <button type="submit">Run Website Exposure Scan</button>
+      </form>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="side">
+      <div class="card">
+        <h4>📂 Common Exposures</h4>
+        <p>
+          • .env files<br>
+          • .git directories<br>
+          • robots.txt leaks<br>
+          • Backup & config files
+        </p>
+      </div>
+
+      <div class="card">
+        <h4>🛡️ Security Value</h4>
+        <p>
+          Helps identify misconfigurations before they
+          are abused by attackers.
+        </p>
+      </div>
+
+      <div class="card warning">
+        <h4>⚠️ Ethical OSINT</h4>
+        <p>
+          No attacks. No exploitation.
+          Only publicly accessible information.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FEATURES ROW -->
+  <div class="features">
+    <div class="feature">
+      <h5>🔍 Passive Only</h5>
+      <p>No active scanning</p>
+    </div>
+    <div class="feature">
+      <h5>📂 Misconfig Detection</h5>
+      <p>Public exposure checks</p>
+    </div>
+    <div class="feature">
+      <h5>🎓 Academic Safe</h5>
+      <p>Ethical OSINT practices</p>
+    </div>
+    <div class="feature">
+      <h5>🧩 Modular Tool</h5>
+      <p>Part of OSINT toolkit</p>
+    </div>
+  </div>
+
+  <footer>
+    OSINT Toolkit • Website Exposure Module<br>
+    Built for academic research & cybersecurity analysis
+  </footer>
+
+</div>
+
+</body>
+</html>

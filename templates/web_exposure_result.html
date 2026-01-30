@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Website Exposure Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg: #020617;
+  --card: #0b1224;
+  --border: #1e293b;
+  --accent: #38bdf8;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #fbbf24;
+  --muted: #94a3b8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: auto;
+  padding: 80px 24px 40px;
+}
+
+/* ===== REPORT CARD ===== */
+
+.report-card {
+  background: linear-gradient(180deg, #0b1224, #050a18);
+  border: 1px solid rgba(56,189,248,.35);
+  border-radius: 22px;
+  padding: 36px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.report-header h2 {
+  margin: 0;
+  color: var(--accent);
+}
+
+.risk {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.risk.high {
+  background: rgba(239,68,68,.15);
+  color: var(--danger);
+  border: 1px solid rgba(239,68,68,.4);
+}
+
+.risk.medium {
+  background: rgba(251,191,36,.15);
+  color: var(--warning);
+  border: 1px solid rgba(251,191,36,.4);
+}
+
+.risk.low {
+  background: rgba(34,197,94,.15);
+  color: var(--success);
+  border: 1px solid rgba(34,197,94,.4);
+}
+
+/* ===== META INFO ===== */
+
+.meta {
+  margin-bottom: 30px;
+  color: var(--muted);
+}
+
+/* ===== SECTIONS ===== */
+
+.section {
+  margin-top: 32px;
+}
+
+.section h3 {
+  margin-bottom: 14px;
+  color: #e5e7eb;
+}
+
+.list {
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.list ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.list li {
+  margin-bottom: 6px;
+  font-size: .9rem;
+}
+
+/* ===== CODE BLOCK ===== */
+
+pre {
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  overflow-x: auto;
+  font-size: .85rem;
+  color: #cbd5f5;
+}
+
+/* ===== ACTIONS ===== */
+
+.actions {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.actions a {
+  padding: 12px 22px;
+  background: var(--accent);
+  color: #020617;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <div class="report-card">
+
+    <!-- HEADER -->
+    <div class="report-header">
+      <h2>🌐 Website Exposure Report</h2>
+      <span class="risk {{ result.risk|lower }}">
+        {{ result.risk }} Risk
+      </span>
+    </div>
+
+    <!-- META -->
+    <div class="meta">
+      <b>Target:</b> {{ result.target }}
+    </div>
+
+    <!-- EXPOSED FILES -->
+    <div class="section">
+      <h3>🚨 Exposed Files & Directories</h3>
+      {% if result.exposed_resources %}
+        <div class="list">
+          <ul>
+            {% for item in result.exposed_resources %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% else %}
+        <p style="color:var(--success);">✅ No exposed sensitive files detected.</p>
+      {% endif %}
+    </div>
+
+    <!-- ROBOTS -->
+    {% if result.robots_paths %}
+    <div class="section">
+      <h3>🤖 robots.txt Disclosures</h3>
+      <div class="list">
+        <ul>
+          {% for path in result.robots_paths %}
+            <li>{{ path }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- SECURITY HEADERS -->
+    {% if result.missing_security_headers %}
+    <div class="section">
+      <h3>🛡 Missing Security Headers</h3>
+      <div class="list">
+        <ul>
+          {% for h in result.missing_security_headers %}
+            <li>{{ h }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- DNS -->
+    {% if result.dns_records %}
+    <div class="section">
+      <h3>🌐 DNS Intelligence</h3>
+      <pre>{{ result.dns_records }}</pre>
+    </div>
+    {% endif %}
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <a href="/web-exposure">🔄 Run Another Check</a>
+      <a href="/">🏠 Back to Home</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
